@@ -62,8 +62,6 @@ class ReportScreen extends StatelessWidget {
           }
           
           final data = provider.responseData ?? {};
-          
-          // Handle API response - check various possible response formats
           final List transactions = _parseTransactionList(data);
 
           if (transactions.isEmpty) {
@@ -86,7 +84,6 @@ class ReportScreen extends StatelessWidget {
 
           return Column(
             children: [
-              // Search Bar Visual (Non-functional, visual consistency)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Container(
@@ -106,7 +103,6 @@ class ReportScreen extends StatelessWidget {
                 ),
               ),
               
-              // Filter Chips
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -123,7 +119,6 @@ class ReportScreen extends StatelessWidget {
               
               const Divider(height: 1),
 
-              // Transaction List
               Expanded(
                 child: ListView.separated(
                   padding: const EdgeInsets.only(top: 0),
@@ -164,7 +159,6 @@ class ReportScreen extends StatelessWidget {
     );
   }
 
-  // Display transaction details from API response
   void _showDetailSheet(BuildContext context, Map<String, dynamic> item) {
     showModalBottomSheet(
       context: context,
@@ -178,7 +172,6 @@ class ReportScreen extends StatelessWidget {
         ),
         child: Column(
           children: [
-            // Header with transaction info
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
@@ -204,7 +197,6 @@ class ReportScreen extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 8),
-                    // Transaction amount from API
                     Text(
                       (item['Amount'] ?? item['TxnAmount'] ?? item['Amt']) != null 
                         ? '\$${item['Amount'] ?? item['TxnAmount'] ?? item['Amt']}' 
@@ -215,7 +207,6 @@ class ReportScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    // Transaction date from API
                     Text(
                       (item['TxnDate'] ?? item['TransactionDate'] ?? item['Date']) != null 
                         ? '${item['TxnDate'] ?? item['TransactionDate'] ?? item['Date']}' 
@@ -230,14 +221,11 @@ class ReportScreen extends StatelessWidget {
               ),
             ),
             
-            // Transaction details from API
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.all(24),
                 children: [
-                  // Display all transaction fields from API
                   ...item.entries.map((entry) {
-                    // Skip amount and date fields as they're shown in header
                     if (entry.key == 'Amount' || entry.key == 'TxnAmount' || entry.key == 'Amt' ||
                         entry.key == 'Date' || entry.key == 'TxnDate' || entry.key == 'TransactionDate') {
                       return const SizedBox.shrink();
@@ -277,23 +265,35 @@ class ReportScreen extends StatelessWidget {
     );
   }
 
-  // Parse transaction list from various possible API response formats
   List<Map<String, dynamic>> _parseTransactionList(Map<String, dynamic> data) {
-    // Try common response structure keys
-    if (data['transactions'] is List) {
-      return List<Map<String, dynamic>>.from(data['transactions'] as List);
+    if (data['transactions'] is List?) {
+      final list = data['transactions'];
+      if (list != null) return List<Map<String, dynamic>>.from(list as List);
     }
-    if (data['data'] is List) {
-      return List<Map<String, dynamic>>.from(data['data'] as List);
+    if (data['data'] is List?) {
+      final list = data['data'];
+      if (list != null) return List<Map<String, dynamic>>.from(list as List);
     }
-    if (data['records'] is List) {
-      return List<Map<String, dynamic>>.from(data['records'] as List);
+    if (data['records'] is List?) {
+      final list = data['records'];
+      if (list != null) return List<Map<String, dynamic>>.from(list as List);
+    }
+    if (data['result'] is List?) {
+      final list = data['result'];
+      if (list != null) return List<Map<String, dynamic>>.from(list as List);
+    }
+    if (data['ReportData'] is List?) {
+      final list = data['ReportData'];
+      if (list != null) return List<Map<String, dynamic>>.from(list as List);
     }
     
-    // If there's nested transaction data in different format
     for (final key in data.keys) {
       if (data[key] is List) {
-        return List<Map<String, dynamic>>.from(data[key] as List);
+        try {
+          return List<Map<String, dynamic>>.from(data[key] as List);
+        } catch (e) {
+          continue;
+        }
       }
     }
     
@@ -309,7 +309,6 @@ class _TransactionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Use actual API response field names
     final title = data['TxnID'] ?? data['TransactionID'] ?? data['TxnId'] ?? 'Transaction';
     final category = data['ProdCode'] ?? data['ProductCode'] ?? data['TID'] ?? 'General';
     final amount = double.tryParse((data['Amount'] ?? data['TxnAmount'] ?? data['Amt'] ?? '0').toString()) ?? 0.0;
@@ -321,7 +320,6 @@ class _TransactionTile extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Row(
           children: [
-            // Icon Box
             Container(
               width: 44,
               height: 44,
@@ -337,7 +335,6 @@ class _TransactionTile extends StatelessWidget {
             ),
             const SizedBox(width: 16),
             
-            // Text Details
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -347,17 +344,14 @@ class _TransactionTile extends StatelessWidget {
                     style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    '$date · $category',
+                  Text('$date · $category',
                     style: TextStyle(color: Colors.grey.shade500, fontSize: 13),
                   ),
                 ],
               ),
             ),
             
-            // Amount
-            Text(
-              '\$${amount.toStringAsFixed(2)}',
+            Text('\$${amount.toStringAsFixed(2)}',
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,

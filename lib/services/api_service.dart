@@ -11,10 +11,8 @@ class ApiService {
   static const Duration _timeout = ApiConfig.requestTimeout;
 
   ApiService() {
-    // Create HttpClient with custom certificate handling
     final HttpClient httpClient = HttpClient()
-      ..badCertificateCallback =
-          ((X509Certificate cert, String host, int port) => true);
+      ..badCertificateCallback =((X509Certificate cert, String host, int port) => true);
     
     _client = IOClient(httpClient);
   }

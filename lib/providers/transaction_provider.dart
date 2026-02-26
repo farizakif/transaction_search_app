@@ -3,12 +3,6 @@ import '../models/transaction_request.dart';
 import '../services/api_service.dart';
 import '../utils/helpers.dart';
 
-/// ============================================================================
-/// TRANSACTION PROVIDER
-/// State management for transaction search and report results
-/// ============================================================================
-
-/// Represents the current state of the transaction search
 enum TransactionState {
   initial,
   loading,
@@ -19,27 +13,16 @@ enum TransactionState {
 class TransactionProvider extends ChangeNotifier {
   final ApiService _apiService = ApiService();
 
-  /// Current state of the transaction search
   TransactionState _state = TransactionState.initial;
   TransactionState get state => _state;
-
-  /// Raw API response (JSON) when successful
   Map<String, dynamic>? _responseData;
   Map<String, dynamic>? get responseData => _responseData;
-
-  /// Error message when state is [TransactionState.error]
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
-
-  /// Last search request (for reference or retry)
   TransactionRequest? _lastRequest;
   TransactionRequest? get lastRequest => _lastRequest;
 
-  /// Performs the transaction search with the given parameters.
-  ///
-  /// 1. Generates AuthToken using SHA512 hashing
-  /// 2. Builds TransactionRequest
-  /// 3. Calls API and updates state
+
   Future<void> searchTransactions({
     required DateTime startDate,
     required DateTime endDate,
@@ -57,7 +40,6 @@ class TransactionProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Generate AuthToken using the hashing logic
       final String authToken = generateAuthToken(
         mid: mid,
         tid: tid ?? '',
@@ -94,7 +76,7 @@ class TransactionProvider extends ChangeNotifier {
     }
   }
 
-  /// Resets the provider to initial state
+
   void reset() {
     _state = TransactionState.initial;
     _responseData = null;
@@ -102,6 +84,7 @@ class TransactionProvider extends ChangeNotifier {
     _lastRequest = null;
     notifyListeners();
   }
+  
 
   @override
   void dispose() {

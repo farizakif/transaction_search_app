@@ -164,6 +164,13 @@ class _SearchScreenState extends State<SearchScreen> {
         actions: [
           TextButton(
             onPressed: () {
+              _midController.clear();
+              _tidController.clear();
+              _txnIdController.clear();
+              _beneAcctNoController.clear();
+              _prodCodeController.clear();
+              _txnStatusController.clear();
+              _maxRowController.clear();
               _formKey.currentState?.reset();
               setState(() { _startDate = null; _endDate = null; });
             },
