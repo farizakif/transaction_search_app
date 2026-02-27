@@ -1,16 +1,21 @@
-# transaction_search_app
 
-A new Flutter project.
+## What the app does
 
-## Getting Started
+- Collects search filters for transactions, including date range, MID (required), and optional identifiers.
+- Validates inputs (length and numeric checks) before sending a request.
+- Generates an auth token from MID, TID, beneficiary account, and the merchant key.
+- Sends a JSON report request to the configured API endpoint.
+- Displays results in a scrollable list and shows a full detail sheet per transaction.
+- Handles empty results and API errors with clear UI states.
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+## Configuration
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+API settings are defined in [lib/config/api_config.dart]
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- `baseUrl`: API endpoint for report requests
+- `merchantKey`: Used to generate the auth token
+- `opName`, `reportType`, `channel`: Included in the request payload
+- `dateFormat`: API date format
+- `requestTimeout`: HTTP timeout
+- The HTTP client currently accepts all certificates. 
