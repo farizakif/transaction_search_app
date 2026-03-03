@@ -5,6 +5,7 @@ void main() {
   testWidgets('Search screen loads with correct title', (WidgetTester tester) async {
     await tester.pumpWidget(const TransactionSearchApp());
 
-    expect(find.text('Transaction Search'), findsOneWidget);
+    expect(find.text('Filters'), findsOneWidget);
+    expect(find.text('Search'), findsOneWidget);
   });
 }
